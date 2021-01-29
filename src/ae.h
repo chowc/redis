@@ -50,7 +50,7 @@
 #define AE_FILE_EVENTS 1
 #define AE_TIME_EVENTS 2
 #define AE_ALL_EVENTS (AE_FILE_EVENTS|AE_TIME_EVENTS)
-#define AE_DONT_WAIT 4
+#define AE_DONT_WAIT 4 // poll 是否需要 wait
 #define AE_CALL_AFTER_SLEEP 8
 
 #define AE_NOMORE -1
@@ -99,7 +99,8 @@ typedef struct aeEventLoop {
     int setsize; /* max number of file descriptors tracked */
     long long timeEventNextId;
     time_t lastTime;     /* Used to detect system clock skew */
-    aeFileEvent *events; /* Registered events */
+    // zmalloc(sizeof(aeFileEvent)*setsize);
+    aeFileEvent *events; /* Registered events，关联 mask，以及对应的 handler 函数 */
     aeFiredEvent *fired; /* Fired events */
     aeTimeEvent *timeEventHead;
     int stop;

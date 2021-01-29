@@ -731,6 +731,8 @@ static void acceptCommonHandler(int fd, int flags, char *ip) {
     c->flags |= flags;
 }
 
+// fd 就是 eventLoop->fired[j].fd;
+// fired[i].fd 会在 ae_select.c:aeApiPoll 中赋值。
 void acceptTcpHandler(aeEventLoop *el, int fd, void *privdata, int mask) {
     int cport, cfd, max = MAX_ACCEPTS_PER_CALL;
     char cip[NET_IP_STR_LEN];

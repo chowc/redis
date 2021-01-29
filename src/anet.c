@@ -531,6 +531,8 @@ int anetUnixServer(char *err, char *path, mode_t perm, int backlog)
 static int anetGenericAccept(char *err, int s, struct sockaddr *sa, socklen_t *len) {
     int fd;
     while(1) {
+
+        // Upon successful completion, accept() shall return the non-negative file descriptor of the accepted socket. Otherwise, -1 shall be returned and errno set to indicate the error.
         fd = accept(s,sa,len);
         if (fd == -1) {
             if (errno == EINTR)

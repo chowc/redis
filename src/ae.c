@@ -371,7 +371,7 @@ int aeProcessEvents(aeEventLoop *eventLoop, int flags)
         int j;
         aeTimeEvent *shortest = NULL;
         struct timeval tv, *tvp;
-
+        // 使用最快到期的 timeevent 的到期时间作为 poll 的 timeout
         if (flags & AE_TIME_EVENTS && !(flags & AE_DONT_WAIT))
             shortest = aeSearchNearestTimer(eventLoop);
         if (shortest) {

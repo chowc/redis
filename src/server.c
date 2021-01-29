@@ -4093,7 +4093,7 @@ int main(int argc, char **argv) {
     getRandomHexChars(hashseed,sizeof(hashseed));
     dictSetHashFunctionSeed((uint8_t*)hashseed);
     server.sentinel_mode = checkForSentinelMode(argc,argv);
-    initServerConfig();
+    initServerConfig(); // server 属性初始化, populateCommandTable
     moduleInitModulesSystem();
 
     /* Store the executable path and arguments in a safe place in order
@@ -4204,6 +4204,10 @@ int main(int argc, char **argv) {
     int background = server.daemonize && !server.supervised;
     if (background) daemonize();
 
+    // aeCreateEventLoop + aeCreateTimeEvent(注册 serverCron) + aeCreateFileEvent(注册 acceptTcpHandler/acceptUnixHandler)
+    // networking.c:acceptTcpHandler 会在 main -> ae.c:aeMain（启动事件循环） -> ae.c:aeProcessEvents 中被调用，
+    // acceptTcpHandler -> acceptCommonHandler -> createClient -> 注册 readQueryFromClient（在这里读取客户端发送的请求）
+    // "对于I/O事件的监听，自然也是依赖事件循环。"
     initServer();
     if (background || server.pidfile) createPidFile();
     redisSetProcTitle(argv[0]);
@@ -4243,6 +4247,7 @@ int main(int argc, char **argv) {
 
     aeSetBeforeSleepProc(server.el,beforeSleep);
     aeSetAfterSleepProc(server.el,afterSleep);
+    // 启动事件循环
     aeMain(server.el);
     aeDeleteEventLoop(server.el);
     return 0;

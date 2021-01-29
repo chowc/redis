@@ -101,6 +101,8 @@ static void aeApiDelEvent(aeEventLoop *eventLoop, int fd, int mask) {
     }
 }
 
+// 如果 tvp != NULL：poll with timeout; else: poll without timeout.
+// 将 poll 返回的 event 设置到 eventLoop.fired 数组；
 static int aeApiPoll(aeEventLoop *eventLoop, struct timeval *tvp) {
     aeApiState *state = eventLoop->apidata;
     int retval, numevents = 0;
